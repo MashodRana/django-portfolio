@@ -15,9 +15,11 @@ def post_view(request):
 
 def post_detail_view(request, id):
     post = PostModel.objects.get(pk=id)
+    comments = CommentModel.objects.filter(post=post)
     context = {
         'title': 'Post Detail',
-        'post': post
+        'post': post,
+        'comments': comments
     }
 
     return render(request=request, template_name='blog/post_detail.html', context=context)
