@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from blog.models import PostModel, CategoryModel, CommentModel
+from blog.forms import CommentForm
 
 
 # Create your views here.
@@ -15,7 +16,18 @@ def post_view(request):
 
 def post_detail_view(request, id):
     post = PostModel.objects.get(pk=id)
+    
+    if request.method=='POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = CommentModel(
+                author=form.cleaned_data.get('author'),
+                body=form.cleaned_data.get('body'),
+                post=post
+            )
+    
     comments = CommentModel.objects.filter(post=post)
+
     context = {
         'title': 'Post Detail',
         'post': post,
