@@ -19,19 +19,22 @@ def post_detail_view(request, id):
     
     if request.method=='POST':
         form = CommentForm(request.POST)
+        print(form)
         if form.is_valid():
             comment = CommentModel(
                 author=form.cleaned_data.get('author'),
                 body=form.cleaned_data.get('body'),
                 post=post
             )
+            comment.save()
     
     comments = CommentModel.objects.filter(post=post)
 
     context = {
         'title': 'Post Detail',
         'post': post,
-        'comments': comments
+        'comments': comments,
+        'form': CommentForm()
     }
 
     return render(request=request, template_name='blog/post_detail.html', context=context)
@@ -39,6 +42,7 @@ def post_detail_view(request, id):
 def post_category_view(request, category):
     posts = PostModel.objects.filter(categories__name__contains=category).order_by('-created_on')
     context = {
+        'category': category,
         'title': 'Categorical Posts',
         'posts': posts
     }
