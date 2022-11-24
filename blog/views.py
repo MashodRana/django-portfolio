@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse, redirect
+from django.contrib.auth.decorators import login_required
 
 from blog.models import PostModel, CategoryModel, CommentModel
 from blog.forms import CommentForm, PostForm
@@ -16,8 +17,6 @@ def post_view(request):
 
 def post_detail_view(request, id):
     post = PostModel.objects.get(pk=id)
-    print(request.user)
-    print(request.user.username)
     if request.method=='POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -29,10 +28,6 @@ def post_detail_view(request, id):
             comment.save()
     
     comments = CommentModel.objects.filter(post=post)
-    for com in comments:
-        print(com.author)
-        print(com.body)
-        print()
 
     context = {
         'title': 'Post Detail',
@@ -43,16 +38,20 @@ def post_detail_view(request, id):
 
     return render(request=request, template_name='blog/post_detail.html', context=context)
 
+
+@login_required
 def post_add_view(request):
     print("I am in the post add view")
     form = PostForm()
     if request.method=='POST':
-        pass
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save()
+            return redirect("post_detail",id=post.pk)
     context = {
         'title': 'Add new post',
         'form': form,
     }
-    print("I am here........")
     return render(request=request, template_name='blog/post_add.html', context=context)
 
 
