@@ -17,12 +17,14 @@
             <div class="col-11">
                 <h2><a href="{% url 'post_detail' post.pk%}">{{ post.title }}</a></h2>
             </div>
+            {% if perms.blog.delete_postmodel%}
             <div class="col-1">
                 <form action="{% url 'post_delete' post.pk %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">DELETE</button>
                 </form>
             </div>
+            {% endif %}
         </div>
         
         <small>
