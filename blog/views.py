@@ -1,5 +1,6 @@
 from django.shortcuts import render, reverse, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from blog.models import PostModel, CategoryModel, CommentModel
 from blog.forms import CommentForm, PostForm
@@ -41,7 +42,6 @@ def post_detail_view(request, id):
 
 @login_required
 def post_add_view(request):
-    print("I am in the post add view")
     form = PostForm()
     if request.method=='POST':
         form = PostForm(request.POST)
@@ -53,6 +53,12 @@ def post_add_view(request):
         'form': form,
     }
     return render(request=request, template_name='blog/post_add.html', context=context)
+
+@login_required
+@require_POST
+def post_delete_view(request, id):
+    PostModel.objects.get(pk=id).delete()
+    return redirect('posts')
 
 
 
