@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block page_content %}
+<form method="post" >
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="id_body">Title:</label>
+        <input value="{{form.title.value}}" type="text" name="title" maxlength="255" required id="id_title"
+            class="form-control" placeholder="Post Title">
+    </div>
+    <div class="form-group">
+        <textarea rows="7" name="body" required id="id_body" class="form-control"
+            placeholder="Write your details here">{{form.body.value}}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="exampleFormControlSelect2">Post Categories</label>
+        <select class="form-control" name="categories" required id="id_categories" multiple>
+            {% for k, v in form.categories.field.choices %}
+            <option value={{k}}>{{v}}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Update</button>
+</form>
+<script>
+    const elm = document.getElementById('id_categories')
+    const catIndices = "{{categories_indices}}".split(';');
+    catIndices.forEach(idx=>{
+        elm.options[Number(idx)-1].selected=true
+    })    
+</script>
+{% endblock %}
+

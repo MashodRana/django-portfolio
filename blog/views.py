@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse, redirect
+from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 
@@ -53,6 +53,23 @@ def post_add_view(request):
         'form': form,
     }
     return render(request=request, template_name='blog/post_add.html', context=context)
+
+@login_required
+def post_update_view(request, id):
+    obj = get_object_or_404(PostModel, pk=id)
+
+    form = PostForm(request.POST or None, instance=obj)
+    if form.is_valid():
+        form.save()
+        return redirect("post_detail", id=id)
+
+    context = {
+        'title': 'Update Post',
+        'form': form,
+        'categories_indices': ";".join([str(kv['id']) for kv in obj.categories.values()])
+    }
+
+    return render(request=request, template_name='blog/post_update.html', context=context)
 
 @login_required
 @require_POST
