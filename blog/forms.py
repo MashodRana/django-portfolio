@@ -6,7 +6,7 @@ from blog.models import CommentModel, PostModel
 class PostForm(ModelForm):
     class Meta:
         model = PostModel
-        exclude = ['created_on', 'last_modified']
+        exclude = ['created_on', 'last_modified', 'user']
 
 class CommentForm(ModelForm):
     class Meta:

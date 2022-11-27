@@ -19,6 +19,8 @@ def post_view(request):
 def post_detail_view(request, id):
     post = PostModel.objects.get(pk=id)
     if request.method=='POST':
+        if not request.user.is_authenticated:
+            return redirect('login')
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = CommentModel(
@@ -27,6 +29,7 @@ def post_detail_view(request, id):
                 post=post
             )
             comment.save()
+        
     
     comments = CommentModel.objects.filter(post=post)
 
@@ -43,10 +46,15 @@ def post_detail_view(request, id):
 @login_required
 def post_add_view(request):
     form = PostForm()
+
     if request.method=='POST':
         form = PostForm(request.POST)
         if form.is_valid():
+            print(request.user)
+            form.instance.user = request.user
+            # print(form.user)
             post = form.save()
+
             return redirect("post_detail",id=post.pk)
     context = {
         'title': 'Add new post',
